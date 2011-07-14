@@ -1,15 +1,17 @@
 <?php
 /*
 * @author: Carlos Vinicius
-* @version: 1.1
+* @version 1.2
 *
 * This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license,
 * visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 *
 * @Description: Classe para criar cache de arquivos através da URL dos mesmos e utilizar esta cache durante um período de dias pré estipulado
-* @usage:	$a=new CacheUrl("http://www.gestaovarejo.com.br"); //definindo a url
-* @usage:	echo $a->getContent(); // retornando o conteúdo
-* @usage:	$a->emptyCache(); // Limpando o cache
+*
+* @usage:	$cache=new CacheUrl("http://www.google.com"); // Definindo a URL
+* @usage:   $cache->setLoginParams(array("username"=>"carlos","password"=>"senha123")); // [Opcional] caso seja necessário autenticação
+* @usage:   $cache->exec();
+* @usage:   echo $cache->getContent(); // saída
 *
 * @alert: Not support get content of URL after # | Não pega nada depois do # caso ele exista na URL
 */
@@ -19,17 +21,29 @@ class CacheUrl
 {
 	private $cacheDir; //Diretório onde os arquivos vão ser armazenados
 	private $cacheDays; //Número de dias em que o arquivo vai permanecer em cache
+	private $loginUrl; //Número de dias em que o arquivo vai permanecer em cache
 	private $urlCode;
 	private $url;
 	private $content;
+	private $postFields;
+	private $authenticate;
+    
 
 	public function __construct($url)
     {
-        $this->cacheDir=PUBLIC_PATH."cache/";
+        // Opções / Configurações
+        $this->cacheDir="cache/"; // Diretório onde vai ser salvo as cópias das páginas
         $this->cacheDays=1;
+        $this->loginUrl="login.php"; // Opcional
+        // -------------------------------------
+        
 		$this->url($url);
-		$this->urlCode=urlencode($this->url);
-	
+        $this->authenticate=false;
+        $this->urlCode=md5(urlencode($this->url));
+    }
+    
+	public function exec()
+    {
 		if(file_exists($this->cacheDir.$this->urlCode) && !$this->isFileOld()){
 			$this->getFromFile();
 		}
@@ -44,7 +58,7 @@ class CacheUrl
     {
 		return $this->content;
 	}
-	
+    
 	public function emptyCache()
     {
 		if ($handle=opendir($this->cacheDir))
@@ -60,6 +74,15 @@ class CacheUrl
 		else
 			return false;
 	}
+    
+    public function setLoginParams($arrayParams)
+    {
+        $tmp=array();
+        foreach($arrayParams as $k=>$v)
+            $tmp[]="$k=$v";
+        $this->postFields=implode("&",$tmp);
+        $this->authenticate=true;
+    }
     
     private function addPostParams($urlParam,$postParams)
     {
@@ -112,11 +135,26 @@ class CacheUrl
 	
 	private function getFromUrl()
     {
-        if(function_exists('curl_init'))
+        if(!function_exists('curl_init'))
             $this->content=file_get_contents($this->url);
         else
         {
             $ch = curl_init();
+            if($this->authenticate)
+            {
+                // Define a URL original (do formulário de login)
+                curl_setopt($ch, CURLOPT_URL, $this->loginUrl);
+                // Habilita o protocolo POST
+                curl_setopt ($ch, CURLOPT_POST, 1);
+                // Define os parâmetros que serão enviados (usuário e senha por exemplo)
+                curl_setopt ($ch, CURLOPT_POSTFIELDS, $this->postFields);
+                // Imita o comportamento patrão dos navegadores: manipular cookies
+                curl_setopt ($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
+                // Define o tipo de transferência (Padrão: 1)
+                curl_setopt ($ch, CURLOPT_RETURNTRANSFER, 1);
+                // Executa a requisição
+                curl_exec ($ch);
+            }
             // informar URL e outras funções ao CURL
             curl_setopt($ch, CURLOPT_URL, $this->url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
