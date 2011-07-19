@@ -1,7 +1,7 @@
 <?php
 /*
 * @author: Carlos Vinicius
-* @version 1.2
+* @version 1.3 2011-07-19
 *
 * This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license,
 * visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
@@ -32,14 +32,14 @@ class CacheUrl
 	public function __construct($url)
     {
         // Opções / Configurações
-        $this->cacheDir="cache/"; // Diretório onde vai ser salvo as cópias das páginas
+        $this->cacheDir=Doo::conf()->SITE_PATH."protected/cache/url/"; // Diretório onde vai ser salvo as cópias das páginas
         $this->cacheDays=1;
-        $this->loginUrl="login.php"; // Opcional
+        $this->loginUrl=Doo::conf()->APP_URL."auth"; // Opcional
         // -------------------------------------
         
 		$this->url($url);
         $this->authenticate=false;
-        $this->urlCode=md5(urlencode($this->url));
+		$this->urlCode=md5(urlencode($this->url));
     }
     
 	public function exec()
@@ -84,7 +84,7 @@ class CacheUrl
         $this->authenticate=true;
     }
     
-    private function addPostParams($urlParam,$postParams)
+    private function addPostParams($urlParam="",$postParams)
     {
         if(strpos($urlParam,"?")===false)
             $url=sprintf("%s?%s",$urlParam,implode("&",$postParams));
@@ -92,16 +92,46 @@ class CacheUrl
             $url=sprintf("%s&%s",$urlParam,implode("&",$postParams));
         return $url;
     }
-        
+
+    private function explodePost($key, $value){
+        $item=array();
+        foreach($value as $k=>$v)
+        {
+            if(is_array($v))
+                $item[]=$this->explodePost($key."[$k]", $v);
+            else
+                $item[]=$key."[$k]=".$v;
+        }
+        $url=implode("&",$item);
+        return $url;
+    }
+
+    private function getPostParams()
+    {
+        if(!empty($_POST))
+        {
+            $postParams=array();
+            foreach($_POST as $k=>$v)
+            {
+                if(is_array($v))
+                    $postParams[]=$this->explodePost($k,$v);
+                else
+                    $postParams[]="$k=$v";
+            }
+        }
+        else
+            $postParams="";
+            
+        return $postParams;
+    }
+
     private function url($urlParam)
     {
         // Adicionando os parâmetros passados por POST a URL (como se fossem GET)
-        $postParams=array();
         if(!empty($_POST))
         {
-            foreach($_POST as $k=>$v)
-                $postParams[]="$k=$v";
-        
+            $postParams=$this->getPostParams();
+            
             if(strpos($urlParam,"#")===false)
                 $url=$this->addPostParams($urlParam,$postParams);
             else
@@ -114,7 +144,7 @@ class CacheUrl
         }
         else
             $url=$urlParam;
-        
+
         $this->url=$url;
     }
 	
@@ -160,7 +190,7 @@ class CacheUrl
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, str_replace("?","",$this->addPostParams("",$this->getPostParams())));
             // Acessar a URL e retornar a saída
             $output = curl_exec($ch);
             // liberar
