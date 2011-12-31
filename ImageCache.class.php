@@ -1,7 +1,7 @@
 <?php
 /*
 * @author: Carlos Vinicius
-* @version 1.0 2011-12-31
+* @version 1.1 2011-12-31
 *
 * This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license,
 * visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
@@ -9,7 +9,7 @@
 * @Description: Classe para criar cache de imagens a partir de uma URL, ideal para site que usam imagens de terceiros como por exemplo do Flickr / Picasa
 *
 * @usage:   $img=new Imagecache("cache","cache"); // Definindo o local físico do cache e a URL até ele
-* @usage:   <img src="<?php $img->printUrl("http://www.exemple.com/img.jpg",80,80,true);?>" alt="imagem" /> // Exemplo imagem redimensionada p/ 80 x 80 (cortada se necessário)
+* @usage:   <img src="<?php $img->printUrl("http://www.exemple.com/img.jpg",72,80,80,true);?>" alt="imagem" /> // Exemplo imagem redimensionada p/ 80 x 80 (cortada se necessário)
 * @usage:   <img src="<?php $img->printUrl("http://www.exemple.com/img.jpg");?>" alt="imagem" /> // Exemplo imagem em tamanho original
 *
 */
@@ -25,6 +25,7 @@ class ImageCache
     private $cacheDir;
     private $cacheUrl;
     private $md5FileName;
+    private $resolution;
     
     function __construct($cacheDir,$cacheUrl)
     {
@@ -32,14 +33,15 @@ class ImageCache
         $this->cacheUrl=$cacheUrl;
     }
     
-    public function printUrl($url,$width=1600,$height=1600,$crop=false)
+    public function printUrl($url,$resolution=72,$width=1600,$height=1600,$crop=false)
     {
         $this->crop=$crop;
-        echo $this->getUrl($url,$width,$height,$crop);
+        echo $this->getUrl($url,$resolution,$width,$height,$crop);
     }
     
-    public function getUrl($url,$width=1600,$height=1600,$crop=false)
+    public function getUrl($url,$resolution=72,$width=1600,$height=1600,$crop=false)
     {
+        $this->resolution=$resolution;
         $this->md5FileName=md5($url.$width.$height.$crop).".jpg";
         $this->outUrl=$this->cacheUrl."/".$this->md5FileName;
         if(!file_exists($this->cacheDir."/".$this->md5FileName))
@@ -163,8 +165,6 @@ class ImageCache
     
     private function saveImage()
     {
-        // header('Content-Type: image/jpeg');
-        // Output
-        imagejpeg($this->imageGd2, $this->cacheDir."/".$this->md5FileName, 72);
+        imagejpeg($this->imageGd2, $this->cacheDir."/".$this->md5FileName, $this->resolution);
     }
 }
