@@ -1,14 +1,14 @@
 <?php
 /*
 * @author: Carlos Vinicius
-* @version 1.3 2011-07-19
+* @version 1.4 2011-12-31
 *
 * This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license,
 * visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 *
 * @Description: Classe para criar cache de arquivos através da URL dos mesmos e utilizar esta cache durante um período de dias pré estipulado
 *
-* @usage:	$cache=new CacheUrl("http://www.google.com"); // Definindo a URL
+* @usage:   $cache=new CacheUrl("http://www.google.com"); // Definindo a URL
 * @usage:   $cache->setLoginParams(array("username"=>"carlos","password"=>"senha123")); // [Opcional] caso seja necessário autenticação
 * @usage:   $cache->exec();
 * @usage:   echo $cache->getContent(); // saída
@@ -32,9 +32,9 @@ class CacheUrl
 	public function __construct($url)
     {
         // Opções / Configurações
-        $this->cacheDir=Doo::conf()->SITE_PATH."protected/cache/url/"; // Diretório onde vai ser salvo as cópias das páginas
+        $this->cacheDir="cache_url/"; // Diretório onde vai ser salvo as cópias das páginas
         $this->cacheDays=1;
-        $this->loginUrl=Doo::conf()->APP_URL."auth"; // Opcional
+        $this->loginUrl="http://www.exemple.com/auth"; // Opcional
         // -------------------------------------
         
 		$this->url($url);
@@ -86,10 +86,12 @@ class CacheUrl
     
     private function addPostParams($urlParam="",$postParams)
     {
-        if(strpos($urlParam,"?")===false)
-            $url=sprintf("%s?%s",$urlParam,implode("&",$postParams));
-        else
-            $url=sprintf("%s&%s",$urlParam,implode("&",$postParams));
+        $url=$urlParam;
+        if(is_array($postParams))
+            if(strpos($urlParam,"?")===false)
+                $url=sprintf("%s?%s",$urlParam,implode("&",$postParams));
+            else
+                $url=sprintf("%s&%s",$urlParam,implode("&",$postParams));
         return $url;
     }
 
