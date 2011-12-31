@@ -16,7 +16,6 @@
 * @alert: Not support get content of URL after # | Não pega nada depois do # caso ele exista na URL
 */
 
-
 class CacheUrl
 {
 	private $cacheDir; //Diretório onde os arquivos vão ser armazenados
