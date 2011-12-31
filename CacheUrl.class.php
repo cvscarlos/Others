@@ -35,18 +35,18 @@ class CacheUrl
         $this->cacheDays=1;
         $this->loginUrl="http://www.exemple.com/auth"; // Opcional
         // -------------------------------------
-        
-		$this->url($url);
+
+        $this->url($url);
         $this->authenticate=false;
-		$this->urlCode=md5(urlencode($this->url));
+        $this->urlCode=md5(urlencode($this->url));
     }
     
 	public function exec()
     {
-		if(file_exists($this->cacheDir.$this->urlCode) && !$this->isFileOld()){
+		if(file_exists($this->cacheDir.$this->urlCode) && !$this->isFileOld())
 			$this->getFromFile();
-		}
-		else{
+		else
+        {
 			$this->getFromUrl();
 			$this->saveFile();
 		}
