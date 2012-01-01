@@ -42,7 +42,7 @@ class ImageCache
     public function getUrl($url,$resolution=72,$width=1600,$height=1600,$crop=false)
     {
         $this->resolution=$resolution;
-        $this->md5FileName=md5($url.$width.$height.$crop).".jpg";
+        $this->md5FileName=md5($url.$resolution.$width.$height.$crop).".jpg";
         $this->outUrl=$this->cacheUrl."/".$this->md5FileName;
         if(!file_exists($this->cacheDir."/".$this->md5FileName))
         {
