@@ -1,11 +1,11 @@
 /*
-* Funзгo para subtituir os caracteres especiais de uma string com JavaScript
+* FunГ§ГЈo para subtituir os caracteres especiais de uma string com JavaScript
 *
 * @author Carlos Vinicius
 * @version 1.0
 * @date 2011-01-05
 */
-if(typeof(String.prototype.replaceChar)!=="function") String.prototype.replaceChar=function(){var _replace={"з":"c","ж":"ae","њ":"oe","б":"a","й":"e","н":"i","у":"o","ъ":"u","а":"a","и":"e","м":"i","т":"o","щ":"u","д":"a","л":"e","п":"i","ц":"o","ь":"u","я":"y","в":"a","к":"e","о":"i","ф":"o","ы":"u","е":"a","г":"a","ш":"o","u":"u","Б":"A","Й":"E","Н":"I","У":"O","Ъ":"U","К":"E","Ф":"O","Ь":"U","Г":"A","Х":"O","А":"A","З":"C"};return this.replace(/[а-ъ]/g,function(a){console.log(a); if(typeof(_replace[a])!="undefined") return _replace[a]; return a;});};
+if(typeof(String.prototype.replaceChar)!=="function") String.prototype.replaceChar=function(){var _replace={"Г§":"c","Г¦":"ae","Е“":"oe","ГЎ":"a","Г©":"e","Г­":"i","Гі":"o","Гє":"u","Г ":"a","ГЁ":"e","Г¬":"i","ГІ":"o","Г№":"u","Г¤":"a","Г«":"e","ГЇ":"i","Г¶":"o","Гј":"u","Гї":"y","Гў":"a","ГЄ":"e","Г®":"i","Гґ":"o","Г»":"u","ГҐ":"a","ГЈ":"a","Гё":"o","u":"u","ГЃ":"A","Г‰":"E","ГЌ":"I","Г“":"O","Гљ":"U","ГЉ":"E","Г”":"O","Гњ":"U","Гѓ":"A","Г•":"O","ГЂ":"A","Г‡":"C"};return this.replace(/[Г -Гє]/g,function(a){console.log(a); if(typeof(_replace[a])!="undefined") return _replace[a]; return a;});};
 
 // Exemplo de uso
-"уgгos".replaceChar(); // saнda: orgaos
+"ГіgГЈos".replaceChar(); // saГ­da: orgaos
