@@ -1,4 +1,6 @@
 /*
+* Função para subtituir os caracteres especiais de uma string com JavaScript
+*
 * @author Carlos Vinicius
 * @version 1.0
 * @date 2011-01-05
