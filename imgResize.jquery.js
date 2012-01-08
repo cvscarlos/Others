@@ -2,7 +2,7 @@
 * jQuery Plugin para redimensionar imagens
 *
 * @author Carlos Vinicius
-* @version 1.0
+* @version 2.0
 * @date 2011-01-06
 *
 * @usage: $("img").resize({"maxWidth":250});
@@ -13,7 +13,7 @@
 * Esta obra foi licenciada com a Licença Creative Commons Attribution 3.0 Unported. Para ver uma cópia desta licença,
 * visite http://creativecommons.org/licenses/by/3.0/ ou envie um pedido por carta para Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
 *
-* Based on: http://stackoverflow.com/questions/1143517/jquery-resizing-image
+* Based on: http://stackoverflow.com/questions/1143517/jquery-resizing-image and http://ditio.net/2010/01/02/jquery-image-resize-plugin/
 */
 jQuery.fn.imgResize=function(opts)
 {
@@ -26,10 +26,30 @@ jQuery.fn.imgResize=function(opts)
     };
     var options=jQuery.extend(defaults, opts);
     var $this=jQuery(this);
+    var _this=$this[0];
     var ratio=0;
-    var width=$this.width();
-    var height=$this.height();
+    var width=_this.naturalWidth;
+    var height=_this.naturalHeigth;
 
+    if(!width || !height)
+    {
+        var img=document.createElement("img");
+        img.src=_this.src;
+        width=img.width;
+        height=img.height;
+    }
+
+    if(width==0 || height==0)
+    {
+        width=$this.attr("realwidth")||0
+        height=$this.attr("realheight")||0
+    }
+
+    if((width==0 || height==0) || $this.hasClass("imgResizeSetSize"))
+    {
+        $this.load(function(){$this.imgResize(options);});
+    }
+    
     if(width>options.maxWidth){
         ratio=options.maxWidth/width;
         height=height*ratio;
@@ -42,4 +62,21 @@ jQuery.fn.imgResize=function(opts)
         height=options.maxHeight;
         options.resize(width,height,$this);
     }
+    
+    return $this;
 };
+
+jQuery.fn.imgResize.setSize=function(){
+    jQuery(".imgResizeSetSize").each(function(){
+        var $this=$(this);
+        var div=jQuery('<div class="imgResize-hideBox"></div>').css({"width":"1px","height":"1px","position":"absolute","right":0,"bottom":0,"z-index":-999,"overflow":"hidden"});
+        jQuery("body").append(div);
+        var img2=jQuery('<img />').attr("src",$this[0].src).appendTo(div).load(function(){
+            $this.attr({"realwidth":img2.width(),"realheight":img2.height()});
+        });
+    });
+};
+
+jQuery(function(){
+    jQuery.fn.imgResize.setSize();
+});
