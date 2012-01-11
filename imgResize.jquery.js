@@ -2,8 +2,8 @@
 * jQuery Plugin para redimensionar imagens
 *
 * @author Carlos Vinicius
-* @version 2.0
-* @date 2011-01-06
+* @version 2.1
+* @date 2011-01-10
 *
 * @usage: $("img").resize({"maxWidth":250});
 *         Para que funcione em navegadores com Webkit é necessário adicionar esta classe a imagem que será redimensionada
@@ -32,7 +32,8 @@ jQuery.fn.imgResize=function(opts)
     var ratio=0;
     var width=_this.naturalWidth;
     var height=_this.naturalHeigth;
-
+    var resize=false;
+    
     if(!width || !height)
     {
         var img=document.createElement("img");
@@ -56,14 +57,17 @@ jQuery.fn.imgResize=function(opts)
         ratio=options.maxWidth/width;
         height=height*ratio;
         width=options.maxWidth;
-        options.resize(width,height,$this);
+        resize=true;
     }
     if(height>options.maxHeight){
         ratio=options.maxHeight/height;
         width=width*ratio;
         height=options.maxHeight;
-        options.resize(width,height,$this);
+        resize=true;
     }
+    
+    if(resize)
+        options.resize(width,height,$this);
     
     return $this;
 };
