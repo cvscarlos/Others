@@ -1,7 +1,7 @@
 <?php
 /*
 * @author: Carlos Vinicius
-* @version 1.1 2011-12-31
+* @version 1.2 2012-06-30
 *
 * This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license,
 * visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.
@@ -24,7 +24,7 @@ class ImageCache
     private $crop;
     private $cacheDir;
     private $cacheUrl;
-    private $md5FileName;
+    private $newFileName;
     private $resolution;
     
     function __construct($cacheDir,$cacheUrl)
@@ -42,9 +42,9 @@ class ImageCache
     public function getUrl($url,$resolution=72,$width=1600,$height=1600,$crop=false)
     {
         $this->resolution=$resolution;
-        $this->md5FileName=md5($url.$resolution.$width.$height.$crop).".jpg";
-        $this->outUrl=$this->cacheUrl."/".$this->md5FileName;
-        if(!file_exists($this->cacheDir."/".$this->md5FileName))
+        $this->newFileName=sha1($url.$resolution.$width.$height.$crop).".jpg";
+        $this->outUrl=$this->cacheUrl."/".$this->newFileName;
+        if(!file_exists($this->cacheDir."/".$this->newFileName))
         {
             $this->crop=$crop;
             $this->width=$width;
@@ -103,7 +103,6 @@ class ImageCache
     {
         $width_crop=$this->width;
         $height_crop=$this->height;
-        $file=file_get_contents($this->url);
         list($width_orig, $height_orig, $imageType) = getimagesize($this->url);
         $tmpSize=($width_orig>$height_orig?$width_orig:$height_orig)*2; //para que W ou H (o que tiver o menor valor) seja igual a dimensão definida para o quadrado ($width_crop)
         
@@ -165,6 +164,6 @@ class ImageCache
     
     private function saveImage()
     {
-        imagejpeg($this->imageGd2, $this->cacheDir."/".$this->md5FileName, $this->resolution);
+        imagejpeg($this->imageGd2, $this->cacheDir."/".$this->newFileName, $this->resolution);
     }
 }
