@@ -8,7 +8,7 @@
 *
 * @Description: Classe para criar cache de imagens a partir de uma URL, ideal para site que usam imagens de terceiros como por exemplo do Flickr / Picasa
 *
-* @usage:   $img=new Imagecache("cache","cache"); // Definindo o local físico do cache e a URL até ele
+* @usage:   $img=new ImageCache("cache","cache"); // Definindo o local físico do cache e a URL até ele
 * @usage:   <img src="<?php $img->printUrl("http://www.exemple.com/img.jpg",72,80,80,true);?>" alt="imagem" /> // Exemplo imagem redimensionada p/ 80 x 80 (cortada se necessário)
 * @usage:   <img src="<?php $img->printUrl("http://www.exemple.com/img.jpg");?>" alt="imagem" /> // Exemplo imagem em tamanho original
 *
