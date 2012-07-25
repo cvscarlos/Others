@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<title></title>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="alert.js"></script>
+    <style type="text/css">
+        body{background:pink;}
+    </style>
+    <script type="text/javascript">
+        $(function(){
+            $("#bt").click(function(){
+                alert("Alerta \n 2a linha texto muito longo com muitas palavras muitas vezes ocupando muitos pixels em muitas resoluções\
+					3a linha");
+            });
+        });
+        $.vkAlert_options={callback:function(){console.log("callback");}};
+    </script>
+</head>
+<body>
+	<h2>Rodando</h2>
+    <button id="bt">Alerta</button>
+</body>
+</html>
