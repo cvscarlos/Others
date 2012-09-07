@@ -24,11 +24,13 @@
     {
         b=$("body");
         w=$(window);
+        d=$(document);
 
         var fn={
             init:function()
             {
-                this.renderHtml();
+                fn.renderHtml();
+                fn.popupActions();
             },
             renderHtml:function()
             {
@@ -38,6 +40,13 @@
                 b.append(overlay);
                 b.append(container);
             },
+			popupActions:function()
+			{
+				container.keyup(function(){
+					var code = (e.keyCode ? e.keyCode : e.which);
+					console.log(e);
+				});
+			},
             newAlert:function(str)
             {
                 wrapper.html(fn.nl2br(str));
@@ -54,17 +63,23 @@
 				
 				return out;
 			},
-			resize:function(){
+			resize:function()
+			{
 				var maxWidth,maxHeight,tmp;
 				
+				// Height
 				tmp=(w.height()-40);
 				maxHeight=tmp<100?100:tmp;
-				
 				wrapper.css("float","left");
-				tmp=wrapper.width();
-				console.log(tmp);
-				
 				container.css("max-height",maxHeight);
+				
+				// Width
+				wrapper.css("white-space","nowrap");
+				tmp=wrapper.width();
+				maxWidth=(w.width()-40)<tmp?200:tmp;
+				wrapper.css("white-space","normal");
+				container.css({"width":maxWidth,"margin-left":-(maxWidth/2)});
+				console.log(maxWidth);
 			}
         };
         
@@ -82,7 +97,7 @@
                 visibility:"hidden"
             },
             containerCss:{
-                border:"1px solid rgb(92,92,92)",
+                border:"1px solid #D1D1D1",
                 "border-radius":4,
                 "box-shadow":"0 0 20px 2px rgba(92,92,92,.3)",
                 padding:8,
