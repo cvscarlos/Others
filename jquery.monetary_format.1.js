@@ -1,7 +1,6 @@
 /*
 *
 * Monetary Format jQuery Plugin
-* @contributor: Carlos Vinicius <carlosjp@hotmail.co.jp>
 * @release: 2011-06-06
 * @version: 1
 *
